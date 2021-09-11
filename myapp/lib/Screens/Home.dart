@@ -24,8 +24,8 @@ class HomeState extends State<Home> {
 
   void getData() async {
     try {
-      response = await http.get(
-          Uri.parse("https://imdb-api.com/en/API/Top250Movies/k_e3z93my9"));
+      response = await http.get(Uri.parse(
+          "https://imdb-api.com/en/API/MostPopularMovies/k_e3z93my9"));
       if (response.statusCode == 200) {
         moviesList = jsonDecode(response.body)['items'];
       } else {
@@ -69,25 +69,29 @@ class HomeState extends State<Home> {
             child: new Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(bottom: 10),
-                  child: TextFormField(
-                    onChanged: (val) => {
-                      EasyDebounce.debounce(
-                          'my-debouncer', Duration(milliseconds: 500), () {
-                        if (val == "" || val == null) {
-                          getData();
-                        } else {
-                          searchData(val);
-                        }
-                      })
-                    },
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.zero)),
-                        hintText: "Search for movies",
-                        suffix: Icon(Icons.search)),
-                  ),
-                ),
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: SizedBox(
+                        height: 50,
+                        child: TextFormField(
+                          onChanged: (val) => {
+                            EasyDebounce.debounce(
+                                'my-debouncer', Duration(milliseconds: 500),
+                                () {
+                              if (val == "" || val == null) {
+                                getData();
+                              } else {
+                                searchData(val);
+                              }
+                            })
+                          },
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(Radius.zero)),
+                              hintText: "Search for movies",
+                              alignLabelWithHint: true,
+                              hintStyle: TextStyle(color: Colors.black),
+                              suffix: Icon(Icons.search)),
+                        ))),
                 Expanded(
                     child: moviesList == null && errorMessage == null
                         ? new Center(
@@ -106,88 +110,115 @@ class HomeState extends State<Home> {
                                           itemCount: moviesList.length,
                                           itemBuilder: (BuildContext context,
                                               int index) {
-                                            return Container(
-                                              padding: EdgeInsets.all(6),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Image.network(
-                                                    moviesList[index]['image'],
-                                                    width:
-                                                        MediaQuery.of(context)
+                                            return Card(
+                                                shadowColor: Colors.grey
+                                                    .withOpacity(0.3),
+                                                semanticContainer: false,
+                                                elevation: 15,
+                                                color: Colors.white,
+                                                borderOnForeground: true,
+                                                child: Container(
+                                                  padding: EdgeInsets.all(6),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Image.network(
+                                                        moviesList[index]
+                                                            ['image'],
+                                                        width: MediaQuery.of(
+                                                                    context)
                                                                 .size
                                                                 .width /
                                                             4,
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
+                                                        errorBuilder: (context,
+                                                            error, stackTrace) {
+                                                          return Icon(
+                                                            Icons
+                                                                .broken_image_outlined,
+                                                            size: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width /
+                                                                4,
+                                                          );
+                                                        },
+                                                      ),
                                                       SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width /
-                                                              3,
-                                                          child: Text(
-                                                            moviesList[index]
-                                                                ['title'],
-                                                            softWrap: true,
-                                                          )),
-                                                      Container(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                top: 1,
-                                                                bottom: 1,
-                                                                left: 5,
-                                                                right: 5),
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.green,
-                                                            borderRadius:
-                                                                BorderRadius
+                                                        width: 10,
+                                                      ),
+                                                      Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          SizedBox(
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width /
+                                                                  3,
+                                                              child: Text(
+                                                                moviesList[
+                                                                        index]
+                                                                    ['title'],
+                                                                softWrap: true,
+                                                              )),
+                                                          Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    top: 10),
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 1,
+                                                                    bottom: 1,
+                                                                    left: 10,
+                                                                    right: 10),
+                                                            decoration: BoxDecoration(
+                                                                color: Colors
+                                                                    .green,
+                                                                borderRadius: BorderRadius
                                                                     .all(Radius
                                                                         .circular(
                                                                             10))),
-                                                        child: moviesList[index]
-                                                                    [
-                                                                    'imDbRating'] !=
-                                                                null
-                                                            ? Text(
-                                                                "${moviesList[index]['imDbRating']} IMDB")
-                                                            : Text(""),
-                                                      ),
+                                                            child: moviesList[
+                                                                            index]
+                                                                        [
+                                                                        'imDbRating'] !=
+                                                                    null
+                                                                ? Text(
+                                                                    "${moviesList[index]['imDbRating']} IMDB")
+                                                                : Text(""),
+                                                          ),
+                                                        ],
+                                                      )
                                                     ],
-                                                  )
-                                                ],
-                                              ),
-                                              margin:
-                                                  EdgeInsets.only(bottom: 10),
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(10)),
-                                                  boxShadow: [
-                                                    new BoxShadow(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.2),
-                                                      offset: const Offset(
-                                                        0,
-                                                        1,
-                                                      ),
-                                                      blurRadius: 15.0,
-                                                      spreadRadius: 2.0,
-                                                    )
-                                                  ]),
-                                            );
+                                                  ),
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 10),
+                                                  // decoration: BoxDecoration(
+                                                  //     color: Colors.white,
+                                                  //     borderRadius:
+                                                  //         BorderRadius.all(
+                                                  //             Radius.circular(
+                                                  //                 10)),
+                                                  //     boxShadow: [
+                                                  //       new BoxShadow(
+                                                  //         color: Colors.grey
+                                                  //             .withOpacity(
+                                                  //                 0.11),
+                                                  //         offset: const Offset(
+                                                  //           0,
+                                                  //           2,
+                                                  //         ),
+                                                  //         blurRadius: 20.0,
+                                                  //         spreadRadius: 20.0,
+                                                  //       )
+                                                  //     ]),
+                                                ));
 
                                             //  ListTile(
                                             //   leading: Image.network(moviesList[index]['image']),
